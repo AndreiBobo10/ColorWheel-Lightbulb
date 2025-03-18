@@ -1,19 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Color Wheel UI</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Live Lightbulb Display</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            background: #1e1e2f;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            text-align: center;
+        }
+
+        .lightbulb {
+            width: 150px;
+            height: 150px;
+            background: #fff;
+            border-radius: 50%;
+            box-shadow: 0 0 30px rgba(255, 255, 255, 0.7);
+            margin-bottom: 20px;
+            transition: background 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .status {
+            font-size: 1.2rem;
+            opacity: 0.8;
+        }
+    </style>
 </head>
 <body>
-    <div id="app">
-        <div class="color-wheel">
-            <div class="indicator"></div>
-        </div>
-        <div class="lightbulb"></div>
+    <div class="container">
+        <div class="lightbulb" id="lightbulb"></div>
+        <div class="status">Waiting for color...</div>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+        async function fetchColor() {
+            try {
+                const response = await fetch('https://example.com/color-data.json'); // Update with your data URL
+                const data = await response.json();
+
+                const color = data.color || '#ffffff';
+                const lightbulb = document.getElementById('lightbulb');
+
+                lightbulb.style.background = color;
+                lightbulb.style.boxShadow = `0 0 40px ${color}`;
+                document.querySelector('.status').textContent = `Current color: ${color}`;
+            } catch (error) {
+                console.error('Error fetching color:', error);
+                document.querySelector('.status').textContent = 'Error fetching color.';
+            }
+        }
+
+        // Poll for updates every 5 seconds
+        setInterval(fetchColor, 5000);
+
+        // Initial load
+        fetchColor();
+    </script>
 </body>
 </html>
